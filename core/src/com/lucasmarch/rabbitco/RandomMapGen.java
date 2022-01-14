@@ -21,14 +21,6 @@ public class RandomMapGen {
     public HashMap<Vector, Entity> createMap(int width, int height){
         HashMap<Vector, Entity> map = new HashMap<>();
         for (int i = 0; i < sum; i++) {
-            if(i<nbLakes){
-                Vector tempPos = new Vector(width, height, true);
-                if(!map.containsKey(tempPos)){
-                    map.put(tempPos, new Lake(tempPos));
-                }
-                else
-                    i-=1;
-            }
             if(i<nbTrees){
                 Vector tempPos = new Vector(width, height, true);
                 if(!map.containsKey(tempPos)){

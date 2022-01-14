@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 
 public abstract class Animal implements IEventAge, IEventHunger, Entity {
 
-    int tresholdE = 3;
+    int tresholdE = 5;
     int moveCost = 1;
-    int ageMaturity;
+    int ageMaturity = 2;
     int ageDeath = 50;
     int baseE = 5;
     String sex;
@@ -61,6 +61,7 @@ public abstract class Animal implements IEventAge, IEventHunger, Entity {
 
     @Override
     public void grow(){
+        System.out.println("ahouee");
         this.ageControler.grow();
     }
 

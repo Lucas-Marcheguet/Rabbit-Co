@@ -16,7 +16,7 @@ public class HungerControler implements IEventHunger {
     public void eventEat() {
         this.reserveE += 1;
         if(this.reserveE >= animal.tresholdE){
-            hungerState.becomeSatiated();
+            changeState(hungerState.becomeSatiated());
         }
     }
 
@@ -24,16 +24,14 @@ public class HungerControler implements IEventHunger {
     public void eventNoEat() {
         this.reserveE -= 1;
         if(this.reserveE < animal.tresholdE){
-            hungerState.becomeHungry();
+            changeState(hungerState.becomeHungry());
         }
         if(this.reserveE <= 0) {
             animal.die();
         }
     }
 
-    public boolean isHungry(){
-        return hungerState instanceof Hungry;
-    }
+    public boolean isHungry(){ return this.hungerState instanceof Hungry; }
 
     public void changeState(IHunger state){
         this.hungerState = state;

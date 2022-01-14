@@ -14,12 +14,16 @@ public class AgeControler implements IEventAge {
     @Override
     public void grow() {
         this.age +=1;
-        if(this.age == animal.getAgeMaturity()){
-            ageState.becomeAdult();
+        if(this.age >= animal.getAgeMaturity()){
+            changeState(ageState.becomeAdult());
         }
     }
 
-    public int getAge(){
-        return this.age;
+    public boolean isBaby(){
+        return this.ageState instanceof Baby;
+    }
+
+    public void changeState(IAge ageS){
+        this.ageState = ageS;
     }
 }

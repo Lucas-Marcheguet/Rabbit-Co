@@ -62,12 +62,18 @@ public class Meadow {
     }
 
     public void clearDay(float day){
-        for(Animal animal : animals.values()){
-            this.leavingObjs = animal.nextDay(day);
+        int i = 0;
+        while(i<this.animals.values().size()-1){
+            i++;
+            Vector key = (Vector) this.animals.keySet().toArray()[i];
+            this.leavingObjs = this.animals.get(key).nextDay(day);
         }
+
         if(this.leavingObjs != null){
-            for(Animal a: this.leavingObjs.getAnimals()){
-                this.leave(a);
+            i = 0;
+            while(i < this.leavingObjs.getAnimals().size()-1){
+                i++;
+                this.leave(this.leavingObjs.getAnimals().get(i));
             }
             for(Carrot c: this.leavingObjs.getCarrots()){
                 this.removeCarrot(c);
@@ -93,7 +99,13 @@ public class Meadow {
     }
 
     public void prepareCarrots(){
-        int nbNewCarrots = (int)(2 + Math.random() * (5-2));
+        int nbNewCarrots = 0;
+        if(this.carrots.size() > 5){
+            nbNewCarrots = 0;
+        }
+        else {
+            nbNewCarrots = (int)(1+ Math.random()* (3-1));
+        }
         for(int i=0; i<nbNewCarrots;i++){
             Vector tempPos = new Vector(800, 600, true);
             this.rabbitScore+=1;
@@ -108,7 +120,7 @@ public class Meadow {
     }
 
     public void prepareAnimals(){
-        int nbFirstBunnies = (int)(Math.random() * 4);
+        int nbFirstBunnies = (int)(Math.random() * 3);
         for (int i = 0; i < nbFirstBunnies; i++) {
             this.rabbitScore += 1;
             Vector tempPos = new Vector(800, 600, true);

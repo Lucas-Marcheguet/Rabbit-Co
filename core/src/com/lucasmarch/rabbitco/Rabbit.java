@@ -1,5 +1,6 @@
 package com.lucasmarch.rabbitco;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,25 +14,21 @@ public class Rabbit extends Animal {
     private Vector position;
     private Sprite sprite;
     private BitmapFont energyFont;
-    private LeavingObjects leavingObjs;
 
     public Rabbit(Vector position, Meadow currentMeadow) {
         super(currentMeadow);
         this.energyFont = new BitmapFont();
         this.position = position;
-        this.ageMaturity = 5;
-        this.moveCost = 1;
+        this.ageMaturity = 1;
         makeSprite();
         this.sprite.setPosition(position.getX(), position.getY());
         this.sprite.scale(1.0f);
         this.energyFont.getData().setScale(0.9f);
-        this.leavingObjs = new LeavingObjects();
     }
 
     public LeavingObjects nextDay(float day){
-        this.leavingObjs.clear();
+        LeavingObjects leavingObjs = new LeavingObjects();
         if(!this.dead){
-            this.grow();
             if(day%1!=0){
                 Meadow bestMeadow = compareMeadows(this);
                 if(bestMeadow != currentMeadow){
@@ -39,6 +36,7 @@ public class Rabbit extends Animal {
                 }
             }
             else {
+                this.grow();
                 leavingObjs.addCarrot(compareActions());
             }
         }
@@ -79,7 +77,6 @@ public class Rabbit extends Animal {
     public void die(){
         System.out.println(this + "died");
         this.currentMeadow.leave(this);
-        this.sprite.getTexture().dispose();
     }
 
     @Override
@@ -113,6 +110,18 @@ public class Rabbit extends Animal {
     @Override
     public void spawn(SpriteBatch batch) {
         this.sprite.draw(batch);
+        if(this.hungerControler.isHungry()){
+            this.energyFont.setColor(new Color(Color.RED));
+        }
+        else {
+            this.energyFont.setColor(new Color(Color.WHITE));
+        }
+        if(this.ageControler.isBaby()){
+            this.sprite.setScale(.99f);
+        }
+        else {
+            this.sprite.setScale(1.5f);
+        }
         this.energyFont.draw(batch, "Energie : " + this.hungerControler.getReserveE(), this.position.getX(), this.position.getY()+40);
     }
 
@@ -125,5 +134,6 @@ public class Rabbit extends Animal {
             this.sprite = new Sprite(new Texture("bunnyF.png"));
         }
     }
+
 }
 
