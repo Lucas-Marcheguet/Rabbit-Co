@@ -2,8 +2,10 @@ package com.lucasmarch.rabbitco;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -12,31 +14,46 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class RabbitAndCo extends ApplicationAdapter {
 	Viewport viewport;
 	Camera camera;
-	Monde world;
+	World world;
 	SpriteBatch batch;
+	SpriteBatch hudBatch;
 	float elapsedTime;
+	int nbMeadows = 6;
+	int meadowNb = 0;
 
 
 	@Override
 	public void create () {
-		world = new Monde(1);
+		world = World.getInstance(new Vector(3, 3));
 		batch = new SpriteBatch();
+		hudBatch = new SpriteBatch();
 		camera = new PerspectiveCamera();
 		viewport = new FitViewport(800, 600, camera);
+		world.prepareWorld(700,500);
 	}
 
 	@Override
 	public void render () {
 		elapsedTime += Gdx.graphics.getDeltaTime();
-		ScreenUtils.clear(0.54f, 0.83f, 0.31f, 1);
-		batch.begin();
-		//montre la premiere prairie
-		world.createWorld(batch, 800, 600);
+		ScreenUtils.clear(0.45f, 0.68f, 0.25f, 1);
 
-		//update each frames
-		world.update(elapsedTime);
-		//world.update(batch);
+		batch.begin();
+
+
+		meadowNb = world.handleMeadow(meadowNb, batch);
+
+		world.updateWorld(elapsedTime);
+		world.nextDay(elapsedTime, Gdx.graphics.getDeltaTime());
+
 		batch.end();
+
+
+
+		hudBatch.begin();
+
+		HUD.draw(hudBatch);
+
+		hudBatch.end();
 	}
 
 	@Override
@@ -48,4 +65,5 @@ public class RabbitAndCo extends ApplicationAdapter {
 	public void dispose () {
 		batch.dispose();
 	}
+
 }

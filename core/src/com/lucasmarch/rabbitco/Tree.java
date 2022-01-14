@@ -1,7 +1,9 @@
 package com.lucasmarch.rabbitco;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Timer;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 public class Tree implements Entity{
@@ -21,9 +23,12 @@ public class Tree implements Entity{
     }
 
     @Override
-    public void create(SpriteBatch batch) {
-        tree = new AnimatedSprite(loader.getTreeTA(), 14);
+    public void prepare() {
+        tree = new AnimatedSprite(loader.getTreeTA(), 1);
         tree.setPosition(pos.getX(), pos.getY());
+    }
+
+    public void spawn(SpriteBatch batch){
         tree.draw(batch);
     }
 

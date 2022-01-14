@@ -10,8 +10,8 @@ public class Vector {
     }
 
     public Vector(int width, int height, boolean random){
-        this.x =(int) Math.random() * width;
-        this.y =(int) Math.random() * height;
+        this.x =(int)(Math.random() * width);
+        this.y =(int)(Math.random() * height);
     }
 
     public int getX(){

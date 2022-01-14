@@ -13,8 +13,8 @@ public class RandomMapGen {
         sum = maxEntities;
         if (maxEntities < 25) throw new IllegalArgumentException(
                 "nombre d'entitées maximum trop bas");
-        nbLakes = (int) (1 + Math.random() * (3-1));
-        nbTrees = (int) (5 + Math.random() * (10-5));
+        nbLakes = (int) (1 + Math.random() * (2-1));
+        nbTrees = (int) (3 + Math.random() * (6-3));
         nbGrass = maxEntities - nbLakes - nbTrees;
     }
 
@@ -37,14 +37,14 @@ public class RandomMapGen {
                 else
                     i-=1;
             }
-            /*if(i<nbGrass){
+            if(i<nbGrass){
                 Vector tempPos = new Vector(width, height, true);
                 if(!map.containsKey(tempPos)){
-
+                    map.put(tempPos, new Grass(tempPos, true, ""));
                 }
                 else
                     i-=1;
-            }*/
+            }
         }
         return map;
     }

@@ -24,7 +24,7 @@ public class Lake implements Entity {
         }
     }
 
-    public void create(SpriteBatch batch) {
+    public void prepare() {
         AnimatedSprite tL = new AnimatedSprite(loader.getTLRiverTA(), 14);
         tL.setPosition(pos.getX(), pos.getY()+spriteSize);
         AnimatedSprite tR = new AnimatedSprite(loader.getTLRiverTA(), 14);
@@ -41,8 +41,11 @@ public class Lake implements Entity {
         this.sprites.add(tR);
         this.sprites.add(bL);
         this.sprites.add(bR);
+    }
 
-        for (AnimatedSprite sprite: sprites) {
+    @Override
+    public void spawn(SpriteBatch batch){
+        for(AnimatedSprite sprite: this.sprites) {
             sprite.draw(batch);
         }
     }
