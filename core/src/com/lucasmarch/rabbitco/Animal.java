@@ -4,16 +4,15 @@ import com.badlogic.gdx.graphics.Texture;
 
 public abstract class Animal implements IEventAge, IEventHunger, Entity {
 
-    int tresholdE = 5;
-    int moveCost = 1;
-    int ageMaturity = 2;
-    int ageDeath = 50;
-    int baseE = 5;
+    boolean mated;
+    int tresholdE = 1;
+    int ageMaturity = 3;
+    int ageDeath = 12;
+    int baseE = 3;
     String sex;
     HungerControler hungerControler;
     AgeControler ageControler;
     Meadow currentMeadow;
-    Texture texture;
     Vector pos;
     boolean dead = false;
 
@@ -37,19 +36,21 @@ public abstract class Animal implements IEventAge, IEventHunger, Entity {
         return currentMeadow.compareMeadows(a);
     }
 
-    public Animal changeMeadow(Meadow newMeadow){
-        this.currentMeadow = newMeadow;
+    abstract void nextDay(float day);
+
+    public void changeMeadow(Meadow newMeadow){
+        this.currentMeadow.leave(this);
         newMeadow.join(this);
+        this.currentMeadow = newMeadow;
         this.eventNoEat();
-        return this;
     }
 
     public abstract void die();
 
     abstract void createChild(Vector postion);
 
-    abstract Carrot compareActions();
-    abstract Carrot goEat();
+    abstract void compareActions();
+    abstract void goEat();
 
     @Override
     public void eventEat() { this.hungerControler.eventEat(); }
@@ -61,7 +62,6 @@ public abstract class Animal implements IEventAge, IEventHunger, Entity {
 
     @Override
     public void grow(){
-        System.out.println("ahouee");
         this.ageControler.grow();
     }
 
@@ -70,9 +70,9 @@ public abstract class Animal implements IEventAge, IEventHunger, Entity {
         return this.sex;
     }
 
-    public void moveNext(Vector movePosition){
-        this.pos = new Vector(movePosition.getX() + 15, movePosition.getY() + 15);
-    }
+    public abstract void moveOn(Vector movePosition);
+
+    abstract void moveNext(Vector movePosition);
 
     public Vector getPos(){
         return this.pos;
@@ -83,6 +83,4 @@ public abstract class Animal implements IEventAge, IEventHunger, Entity {
     }
 
     public abstract void reproduce(Vector pos);
-
-    public abstract LeavingObjects nextDay(float day);
 }

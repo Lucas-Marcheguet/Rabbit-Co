@@ -7,10 +7,10 @@ import com.lucasmarch.rabbitco.RabbitAndCo;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width  = 800;
-		config.height = 600;
-		config.backgroundFPS = 20;
-		config.foregroundFPS = 20;
+		config.width  = 850;
+		config.height = 650;
+		config.backgroundFPS = 30;
+		config.foregroundFPS = 30;
 		new LwjglApplication(new RabbitAndCo(), config);
 	}
 }

@@ -16,15 +16,12 @@ public class Meadow {
     private HashMap<Vector, Animal> animals;
     private HashMap<Vector, Carrot> carrots;
 
-    private LeavingObjects leavingObjs;
-
     public Meadow(HashMap<Vector, Entity> entities, int index, World world) {
         this.world = world;
         this.index = index;
         this.entities = entities;
         this.carrots = new HashMap<>();
         this.animals = new HashMap<>();
-        this.leavingObjs = new LeavingObjects();
         for(Entity e : this.entities.values()){
             e.prepare();
         }
@@ -40,9 +37,9 @@ public class Meadow {
         this.world = meadow.world;
     }
 
-    public void update(float elapsedTime){
+    public void update(float elapsedTime, SpriteBatch batch){
         for(Entity e : this.entities.values()){
-            e.update(elapsedTime);
+            e.update(elapsedTime, batch);
         }
     }
 
@@ -55,6 +52,9 @@ public class Meadow {
     }
 
     public void nextDay(float day){
+        if(this.carrots.size() < this.animals.size() || this.animals.size() > 6){
+            this.rabbitScore-=this.animals.size()*0.5;
+        }
         clearDay(day);
         if(day%1==0) {
             prepareCarrots();
@@ -63,23 +63,11 @@ public class Meadow {
 
     public void clearDay(float day){
         int i = 0;
-        while(i<this.animals.values().size()-1){
-            i++;
+        while(i<=this.animals.size()-1){
             Vector key = (Vector) this.animals.keySet().toArray()[i];
-            this.leavingObjs = this.animals.get(key).nextDay(day);
+            this.animals.get(key).nextDay(day);
+            i++;
         }
-
-        if(this.leavingObjs != null){
-            i = 0;
-            while(i < this.leavingObjs.getAnimals().size()-1){
-                i++;
-                this.leave(this.leavingObjs.getAnimals().get(i));
-            }
-            for(Carrot c: this.leavingObjs.getCarrots()){
-                this.removeCarrot(c);
-            }
-        }
-        this.leavingObjs.clear();
     }
 
     public Meadow compareMeadows(Animal a){
@@ -87,9 +75,7 @@ public class Meadow {
     }
 
     public void leave(Animal a){
-        if(a!=null){
-            animals.remove(a.getPos(), a);
-        }
+        animals.remove(a.getPos(), a);
     }
 
     public void join(Animal a){
@@ -104,7 +90,7 @@ public class Meadow {
             nbNewCarrots = 0;
         }
         else {
-            nbNewCarrots = (int)(1+ Math.random()* (3-1));
+            nbNewCarrots = (int)(3+ Math.random()* (5-3));
         }
         for(int i=0; i<nbNewCarrots;i++){
             Vector tempPos = new Vector(800, 600, true);
@@ -120,15 +106,12 @@ public class Meadow {
     }
 
     public void prepareAnimals(){
-        int nbFirstBunnies = (int)(Math.random() * 3);
-        for (int i = 0; i < nbFirstBunnies; i++) {
+        int nbFirstRabbits = (int)(4 + Math.random() * 8 - 4);
+        for (int i = 0; i < nbFirstRabbits; i++) {
             this.rabbitScore += 1;
-            Vector tempPos = new Vector(800, 600, true);
+            Vector tempPos = new Vector(500, 400, true);
             Rabbit tempRabbit = new Rabbit(tempPos, this);
             animals.put(tempPos, tempRabbit);
-        }
-        if(this.carrots.size() < this.animals.size()){
-            this.rabbitScore-=15;
         }
     }
 
@@ -176,10 +159,34 @@ public class Meadow {
 
     public void removeCarrot(Carrot carrot){
         if(carrot!=null){
-            System.out.println("Carrot eaten");
             this.carrots.remove(carrot.getPos(), carrot);
         }
     }
 
+    public void addRabbit(Rabbit r){
+        this.animals.put(r.getPos(), r);
+    }
 
+    public Vector findAnimalKey(Animal a){
+        Vector res = null;
+        for(Vector key: this.animals.keySet()){
+            if(this.animals.get(key) == a){
+                res = key;
+            }
+        }
+        return res;
+    }
+
+    public void removeRabbit(Rabbit r) {
+        this.animals.remove(findAnimalKey(r));
+    }
+
+    public int getNbCarrots() {
+        return this.carrots.size();
+    }
+
+    public int getNbRabbits(){
+        return this.getAllRabits().size();
+    }
 }
+

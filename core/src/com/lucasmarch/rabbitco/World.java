@@ -82,11 +82,11 @@ public class World {
         }
     }
 
-    public void updateWorld(float elapsedTime){
+    public void updateWorld(float elapsedTime, SpriteBatch batch){
         HUD.time = elapsedTime;
         HUD.day = this.day;
         for (Meadow meadow: this.meadows) {
-            meadow.update(elapsedTime);
+            meadow.update(elapsedTime, batch);
         }
     }
 
@@ -105,7 +105,6 @@ public class World {
     public int handleMeadow(int meadowNb, SpriteBatch batch){
         this.spawnMeadow(meadowNb, batch);
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
-            System.out.println(meadowNb);
             this.destroy(meadowNb);
             meadowNb+=1;
             if(meadowNb > this.nbOfMeadows-1){
@@ -113,28 +112,10 @@ public class World {
             }
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
-            System.out.println(meadowNb);
             this.destroy(meadowNb);
             meadowNb-=1;
             if(meadowNb < 0){
                 meadowNb=this.nbOfMeadows-1;
-            }
-        }
-
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
-            System.out.println("meadownb : " + meadowNb);
-            this.destroy(meadowNb);
-            meadowNb+=this.dimensions.getX();
-            if(meadowNb>this.nbOfMeadows-1){
-                meadowNb-=this.nbOfMeadows;
-            }
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
-            System.out.println("meadownb : " + meadowNb);
-            this.destroy(meadowNb);
-            meadowNb-=this.dimensions.getX();
-            if(meadowNb < 0){
-                meadowNb+=this.nbOfMeadows;
             }
         }
         return meadowNb;
@@ -144,4 +125,15 @@ public class World {
         return this.day;
     }
 
+    public Meadow getMeadow(int meadowNb){
+        return this.meadows.get(meadowNb);
+    }
+
+    public int getNbRabitsTotal() {
+        int cpt = 0;
+        for(Meadow m: this.meadows){
+            cpt += m.getNbRabbits();
+        }
+        return cpt;
+    }
 }

@@ -10,8 +10,8 @@ public class Vector {
     }
 
     public Vector(int width, int height, boolean random){
-        this.x =(int)(Math.random() * width);
-        this.y =(int)(Math.random() * height);
+        this.x =(int)(100 + Math.random() * width-100);
+        this.y =(int)(100 + Math.random() * height-100);
     }
 
     public int getX(){
@@ -26,5 +26,9 @@ public class Vector {
         if((this.x - dist == v2.getX() ||  this.x + dist == v2.getX()) &&  (this.y + dist == v2.getY() ||  this.y + dist == v2.getY()))
             return true;
         return false;
+    }
+
+    public Vector add(Vector vec){
+        return new Vector(this.x+vec.getX(), this.y += vec.getY());
     }
 }

@@ -1,6 +1,5 @@
 package com.lucasmarch.rabbitco;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,18 +11,20 @@ public class Carrot extends Sprite implements Entity {
 
     public Carrot(Vector position, Meadow meadow){
         super(new Texture("32x32carrot.png"));
+        this.position = position;
         this.meadow = meadow;
         this.setPosition(position.getX(), position.getY());
         this.scale(-0.1f);
     }
 
     public void eaten(){
-        this.getTexture().dispose();
+        this.setAlpha(100);
         this.meadow.removeCarrot(this);
+        this.getTexture().dispose();
     }
 
     @Override
-    public void update(float elapsedTime) {
+    public void update(float elapsedTime, SpriteBatch batch) {
         return;
     }
 

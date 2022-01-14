@@ -1,6 +1,5 @@
 package com.lucasmarch.rabbitco;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class Lake implements Entity {
         pos = position;
     }
 
-    public void update(float elapsedTime){
+    public void update(float elapsedTime, SpriteBatch batch){
         for (AnimatedSprite sprite: sprites) {
             sprite.update(elapsedTime);
         }

@@ -29,7 +29,7 @@ public class RabbitAndCo extends ApplicationAdapter {
 		hudBatch = new SpriteBatch();
 		camera = new PerspectiveCamera();
 		viewport = new FitViewport(800, 600, camera);
-		world.prepareWorld(700,500);
+		world.prepareWorld(800,600);
 	}
 
 	@Override
@@ -41,8 +41,13 @@ public class RabbitAndCo extends ApplicationAdapter {
 
 
 		meadowNb = world.handleMeadow(meadowNb, batch);
+		HUD.meadow=meadowNb;
+		HUD.nbCarrots=world.getMeadow(meadowNb).getNbCarrots();
+		HUD.nbRabbits = world.getMeadow(meadowNb).getNbRabbits();
+		HUD.nbRabbitsTotal=world.getNbRabitsTotal();
+		HUD.rScore=world.getMeadow(meadowNb).getRabbitScore();
 
-		world.updateWorld(elapsedTime);
+		world.updateWorld(elapsedTime, batch);
 		world.nextDay(elapsedTime, Gdx.graphics.getDeltaTime());
 
 		batch.end();

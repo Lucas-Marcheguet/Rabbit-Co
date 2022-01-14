@@ -2,7 +2,6 @@ package com.lucasmarch.rabbitco;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,38 +12,38 @@ public class Rabbit extends Animal {
 
     private Vector position;
     private Sprite sprite;
-    private BitmapFont energyFont;
+    private InfoText energyFont;
+    private boolean died = false;
 
     public Rabbit(Vector position, Meadow currentMeadow) {
         super(currentMeadow);
-        this.energyFont = new BitmapFont();
+        this.energyFont = new InfoText();
         this.position = position;
-        this.ageMaturity = 1;
+        this.ageMaturity = 2;
+        this.ageDeath = 10;
         makeSprite();
         this.sprite.setPosition(position.getX(), position.getY());
-        this.sprite.scale(1.0f);
-        this.energyFont.getData().setScale(0.9f);
+        this.energyFont.setScale(0.9f);
     }
 
-    public LeavingObjects nextDay(float day){
-        LeavingObjects leavingObjs = new LeavingObjects();
-        if(!this.dead){
-            if(day%1!=0){
-                Meadow bestMeadow = compareMeadows(this);
-                if(bestMeadow != currentMeadow){
-                    leavingObjs.addAnimal(this.changeMeadow(bestMeadow));
-                }
-            }
-            else {
-                this.grow();
-                leavingObjs.addCarrot(compareActions());
+    public void nextDay(float day){
+        this.mated=false;
+        if(day%1!=0){
+            double rdm = Math.random();
+            Meadow bestMeadow = compareMeadows(this);
+            if(bestMeadow != currentMeadow && rdm > 0.5 && !this.isHungry()){
+                this.changeMeadow(bestMeadow);
             }
         }
-        return leavingObjs;
+        else {
+            this.grow();
+            compareActions();
+
+        }
     }
 
     @Override
-    Carrot compareActions() {
+    public void compareActions() {
         float matingScore = 1;
         ArrayList<Rabbit> opposedSex = new ArrayList<>();
         for (Rabbit rabbit : this.currentMeadow.getAllRabits()) {
@@ -55,39 +54,52 @@ public class Rabbit extends Animal {
         }
         float matingWeight = 1 - (1 / matingScore);
         double rdm = Math.random() * matingWeight;
-        if (rdm > 0.5 * matingWeight && !this.hungerControler.isHungry()) {
-            this.eventNoEat();
-            this.reproduce(opposedSex.get((int) (Math.random() * opposedSex.size()-1)).getPos());
-        } else {
-            return this.goEat();
+        if (rdm > 0.5 * matingWeight && !this.isHungry() && !this.isBaby() && opposedSex.size()>0) {
+            Rabbit r = opposedSex.get((int) (Math.random() * opposedSex.size()));
+            if(!r.getMated()){
+                this.mated = true;
+                this.reproduce(r.getPos());
+            }
         }
-        return null;
+        else {
+            this.goEat();
+        }
+        this.eventNoEat();
+        this.eventNoEat();
+        this.eventNoEat();
+        this.eventNoEat();
     }
 
     @Override
-    Carrot goEat() {
+    public void goEat() {
         HashMap<Vector, Carrot> carrots = this.currentMeadow.getAllCarrots();
-        int randIndex = (int) (Math.random() * carrots.size() - 1);
-        Carrot carrot = carrots.get(carrots.keySet().toArray()[randIndex]);
-        this.eventEat();
-        return carrot;
+        if(carrots.size()!=0){
+            int randIndex = (int) (Math.random() * carrots.size());
+            Carrot carrot = carrots.get(carrots.keySet().toArray()[randIndex]);
+            this.moveOn(carrot.getPos());
+            this.currentMeadow.removeCarrot(carrot);
+            this.eventEat();
+        }
     }
 
     @Override
     public void die(){
-        System.out.println(this + "died");
-        this.currentMeadow.leave(this);
+        this.died = true;
+        this.sprite.setAlpha(100);
+        this.currentMeadow.removeRabbit(this);
     }
 
     @Override
     public void reproduce(Vector pos) {
+        this.moveNext(pos);
         this.createChild(pos);
+        this.moveNext(position);
     }
 
     @Override
     void createChild(Vector position) {
         if(this.currentMeadow != null){
-            this.currentMeadow.getAllRabits().add(new Rabbit(position, this.currentMeadow));
+            this.currentMeadow.addRabbit(new Rabbit(position.add(new Vector(15, 15, true)), this.currentMeadow));
         }
     }
 
@@ -98,7 +110,7 @@ public class Rabbit extends Animal {
     }
 
     @Override
-    public void update(float elapsedTime) {
+    public void update(float elapsedTime, SpriteBatch batch) {
         return;
     }
 
@@ -109,20 +121,27 @@ public class Rabbit extends Animal {
 
     @Override
     public void spawn(SpriteBatch batch) {
-        this.sprite.draw(batch);
-        if(this.hungerControler.isHungry()){
-            this.energyFont.setColor(new Color(Color.RED));
+        if(!this.died){
+            this.energyFont.setPosition(this.position.getX(), this.position.getY()+50);
+            this.energyFont.draw(batch, "Energie : " + this.hungerControler.getReserveE());
+            this.sprite.draw(batch);
+            if(this.hungerControler.isHungry()){
+                this.energyFont.setColor(new Color(Color.RED));
+            }
+            else {
+                this.energyFont.setColor(new Color(Color.WHITE));
+            }
+            if(this.ageControler.isBaby()){
+                this.sprite.setScale(1.0f);
+            }
+            else {
+                this.sprite.setScale(1.5f);
+            }
         }
         else {
-            this.energyFont.setColor(new Color(Color.WHITE));
+            this.sprite.draw(batch);
+            this.sprite.setAlpha(255);
         }
-        if(this.ageControler.isBaby()){
-            this.sprite.setScale(.99f);
-        }
-        else {
-            this.sprite.setScale(1.5f);
-        }
-        this.energyFont.draw(batch, "Energie : " + this.hungerControler.getReserveE(), this.position.getX(), this.position.getY()+40);
     }
 
     public void makeSprite(){
@@ -135,5 +154,28 @@ public class Rabbit extends Animal {
         }
     }
 
+    @Override
+    public void moveOn(Vector movePosition){
+        this.position = new Vector(movePosition.getX(), movePosition.getY());
+        this.sprite.setPosition(movePosition.getX(), movePosition.getY());
+    }
+
+    @Override
+    public void moveNext(Vector movePosition){
+        this.position = new Vector(movePosition.getX()-10, movePosition.getY());
+        this.sprite.setPosition(movePosition.getX()-10, movePosition.getY());
+    }
+
+    public boolean isBaby(){
+        return this.ageControler.isBaby();
+    }
+
+    public boolean isHungry(){
+        return this.hungerControler.isHungry();
+    }
+
+    public boolean getMated(){
+        return this.mated;
+    }
 }
 

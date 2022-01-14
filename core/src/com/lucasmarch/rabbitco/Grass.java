@@ -28,7 +28,7 @@ public class Grass implements Entity{
     }
 
     @Override
-    public void update(float elapsedTime) {
+    public void update(float elapsedTime, SpriteBatch batch) {
         return;
     }
 

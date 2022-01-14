@@ -1,10 +1,6 @@
 package com.lucasmarch.rabbitco;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Timer;
-
-import java.sql.Time;
-import java.util.ArrayList;
 
 public class Tree implements Entity{
 
@@ -18,7 +14,7 @@ public class Tree implements Entity{
     }
 
     @Override
-    public void update(float elapsedTime){
+    public void update(float elapsedTime, SpriteBatch batch){
         tree.update(elapsedTime);
     }
 
